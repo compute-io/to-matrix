@@ -1,7 +1,7 @@
 {
   "name": "compute-to-matrix",
   "version": "0.0.0",
-  "description": "Construct a matrix from an array-of-arrays.",
+  "description": "Construct a matrix from an array of arrays.",
   "author": {
     "name": "Philipp Burckhardt",
     "email": "pburckhardt@outlook.com"
@@ -30,7 +30,12 @@
   "bugs": {
     "url": "https://github.com/compute-io/to-matrix/issues"
   },
-  "dependencies": {},
+  "dependencies": {
+    "validate.io-array-array": "^1.0.0",
+    "validate.io-contains": "^1.0.0",
+    "validate.io-function": "^1.0.2",
+    "validate.io-object": "^1.0.4"
+  },
   "devDependencies": {
     "chai": "2.x.x",
     "mocha": "2.x.x",
