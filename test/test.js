@@ -24,6 +24,32 @@ describe( 'compute-to-matrix', function tests() {
 		expect( toMatrix ).to.be.a( 'function' );
 	});
 
+
+	it( 'should throw an error if provided input which is not an array of arrays', function test() {
+		var values = [
+			'5',
+			5,
+			true,
+			undefined,
+			null,
+			NaN,
+			[],
+			{},
+			function(){}
+		];
+
+		for ( var i = 0; i < values.length; i++ ) {
+			expect( badValue( values[ i ] ) ).to.throw( TypeError );
+		}
+
+		function badValue( value ) {
+			return function() {
+				toMatrix( value );
+			};
+		}
+
+	});
+
 	it( 'should throw an error if `options` is not an object', function test() {
 		var values = [
 			'5',
@@ -95,6 +121,8 @@ describe( 'compute-to-matrix', function tests() {
 	});
 
 	it( 'should throw an error if provided an array of arrays of unequal dimensions', function test() {
+
+		// without accessor:
 		expect( badValue() ).to.throw( TypeError );
 
 		function badValue() {
@@ -102,6 +130,20 @@ describe( 'compute-to-matrix', function tests() {
 				toMatrix(  [ [ 1, 2, 3 ], [ 4, 5 ] ] );
 			};
 		}
+
+		// with accessor:
+		expect( badValue2() ).to.throw( TypeError );
+
+		function badValue2() {
+			return function() {
+				toMatrix(  [ [ {'x': 1}, 2, 3 ], [ {'x': 4}, 5 ] ], {'accessor': getValue} );
+			};
+		}
+
+		function getValue( d, i, j ) {
+			return j === 0 ? d.x : d;
+		}
+
 	});
 
 
@@ -123,6 +165,36 @@ describe( 'compute-to-matrix', function tests() {
 		for ( i = 0; i < nRows; i++ ) {
 			for ( j = 0; j < nCols; j++ ) {
 				expect( m.get( i, j ) === X[i][j] ).to.be.true;
+			}
+		}
+	});
+
+	it( 'should construct a Matrix from an array of arrays specifying a data type', function test() {
+
+		var i, j, m, X, expected, nRows, nCols;
+
+		X = [
+			[ 2.2, 4, 3, 1],
+			[ 1, 2, 2, 1],
+			[ 7, 3.1, 9, 7.2],
+			[ 11, 9.3, 9, 8],
+			[ 3, 2, 3, 1]
+		];
+		nRows = X.length;
+		nCols = X[0].length;
+
+		expected = [
+			[ 2, 4, 3, 1],
+			[ 1, 2, 2, 1],
+			[ 7, 3, 9, 7],
+			[ 11, 9, 9, 8],
+			[ 3, 2, 3, 1]
+		];
+
+		m = toMatrix( X, {'dtype': 'int32'} );
+		for ( i = 0; i < nRows; i++ ) {
+			for ( j = 0; j < nCols; j++ ) {
+				expect( m.get( i, j ) === expected[i][j] ).to.be.true;
 			}
 		}
 	});

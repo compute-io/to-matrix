@@ -12,4 +12,4 @@ var X = [
 
 var m = toMatrix( X );
 
-console.log( m.get(4, 3 ) );
+console.log( m.get( 3, 0 ) );
