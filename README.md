@@ -22,8 +22,81 @@ var toMatrix = require( 'compute-to-matrix' );
 
 #### toMatrix( arr[, options ] )
 
-What does this function do?
+This function converts the input argument `arr`, an array of arrays, into
+a [matrix](https://github.com/compute-io/matrix).
 
+``` javascript
+var arr = [
+	[ 1, 2, 3 ],
+	[ 4, 5, 6 ],
+	[ 7, 8, 9 ]
+]
+
+var mat = toMatrix( arr );
+/*
+	[ 1, 2, 3
+	  4, 5, 6,
+	  7, 8, 9 ]
+*/
+```
+
+The function accepts the following `options`:
+
+*	__accessor__: accessor `function` for accessing `array` values
+*	__dtype__:  data type of the `matrix`
+
+For non-numeric `arrays`, provide an accessor `function` for accessing `array` values.
+
+``` javascript
+var X = [
+	[ {'x': 1}, {'x': 0}, {'x': 0} ],
+	[ {'x': 0}, {'x': 1}, {'x': 0} ],
+	[ {'x': 0}, {'x': 0}, {'x': 1} ],
+]
+
+function getValue( d ) {
+	return d.x
+}
+
+var mat = toMatrix( X, {'accessor': getValue} );
+/*
+	[ 1, 0, 0
+	  0, 1, 0,
+	  0, 0, 1 ]
+*/
+```
+
+The `accessor` function receives three parameters:
+
+- `d`: the current datum
+- `i`: the row index of the current element
+- `j`: the column index of the current element 
+
+The function also accepts an `dtype` option, which specifies the data type of the matrix to be created. The default value is `float64`.
+
+The following `dtypes` are accepted:
+
+*	`int8`
+*	`uint8`
+*	`uint8_clamped`
+*	`int16`
+*	`uint16`
+*	`int32`
+*	`uint32`
+*	`float32`
+*	`float64`
+
+``` javascript
+var X = [
+	[ 1.1, 2.3 ],
+	[ 3.2, 4.1 ]
+]
+var mat = toMatrix( X, {'dtype': 'int32'} );
+/*
+	[ 1, 2,
+	  3, 4 ]
+*/
+```
 
 ## Examples
 

@@ -25,7 +25,20 @@
   "keywords": [
     "compute.io",
     "compute",
-    "computation"
+    "computation",
+    "mathematics",
+    "math",
+    "linear",
+    "algebra",
+    "two dimensional",
+    "2d",
+    "matrix",
+    "matrices",
+    "data",
+    "structure",
+    "data structure",
+    "array",
+	"array of arrays",
   ],
   "bugs": {
     "url": "https://github.com/compute-io/to-matrix/issues"
