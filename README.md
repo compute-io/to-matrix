@@ -41,7 +41,7 @@ var mat = toMatrix( arr );
 
 The function accepts the following `options`:
 
-*	__accessor__: accessor `function` for accessing `array` values
+*	__accessor__: accessor `function` for accessing `array` values.
 *	__dtype__:  [`matrix`](https://github.com/dstructs/matrix) data type. Default: `float64`.
 
 For non-numeric nested `arrays`, provide an accessor `function` for accessing `array` values.
