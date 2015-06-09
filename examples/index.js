@@ -2,7 +2,13 @@
 
 var toMatrix = require( './../lib' );
 
-var X = [
+var nRows,
+	nCols,
+	arr,
+	mat,
+	i, j;
+
+arr = [
 	[ 2, 4, 3, 1],
 	[ 1, 2, 2, 1],
 	[ 7, 3, 9, 7],
@@ -10,6 +16,13 @@ var X = [
 	[ 3, 2, 3, 1]
 ];
 
-var m = toMatrix( X );
+nRows = arr.length;
+nCols = arr[ 0 ].length;
 
-console.log( m.get( 3, 0 ) );
+mat = toMatrix( arr );
+
+for ( i = 0; i < nRows; i++ ) {
+	for ( j = 0; j < nCols; j++ ) {
+		console.log( '(%d,%d) -> %d', i, j, mat.get( i, j ) );
+	}
+}

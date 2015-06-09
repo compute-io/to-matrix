@@ -2,7 +2,7 @@ to-matrix
 ===
 [![NPM version][npm-image]][npm-url] [![Build Status][travis-image]][travis-url] [![Coverage Status][coveralls-image]][coveralls-url] [![Dependencies][dependencies-image]][dependencies-url]
 
-> Construct a matrix from an array-of-arrays.
+> Construct a [matrix](https://github.com/dstructs/matrix) from an array of arrays.
 
 
 ## Installation
@@ -22,8 +22,7 @@ var toMatrix = require( 'compute-to-matrix' );
 
 #### toMatrix( arr[, options ] )
 
-This function converts the input argument `arr`, an array of arrays, into
-a [matrix](https://github.com/compute-io/matrix).
+Constructs a [`matrix`](https://github.com/dstructs/matrix) from an `array` of `arrays`.
 
 ``` javascript
 var arr = [
@@ -34,76 +33,79 @@ var arr = [
 
 var mat = toMatrix( arr );
 /*
-	[ 1, 2, 3
-	  4, 5, 6,
-	  7, 8, 9 ]
+	[ 1 2 3
+	  4 5 6
+	  7 8 9 ]
 */
 ```
 
 The function accepts the following `options`:
 
 *	__accessor__: accessor `function` for accessing `array` values
-*	__dtype__:  data type of the `matrix`
+*	__dtype__:  [`matrix`](https://github.com/dstructs/matrix) data type. Default: `float64`.
 
-For non-numeric `arrays`, provide an accessor `function` for accessing `array` values.
+For non-numeric nested `arrays`, provide an accessor `function` for accessing `array` values.
 
 ``` javascript
-var X = [
+var arr = [
 	[ {'x': 1}, {'x': 0}, {'x': 0} ],
 	[ {'x': 0}, {'x': 1}, {'x': 0} ],
 	[ {'x': 0}, {'x': 0}, {'x': 1} ],
-]
+];
 
-function getValue( d ) {
-	return d.x
+function getValue( d, i, j ) {
+	return d.x;
 }
 
-var mat = toMatrix( X, {'accessor': getValue} );
+var mat = toMatrix( arr, {
+	'accessor': getValue
+});
 /*
-	[ 1, 0, 0
-	  0, 1, 0,
-	  0, 0, 1 ]
+	[ 1 0 0
+	  0 1 0
+	  0 0 1 ]
 */
 ```
 
-The `accessor` function receives three parameters:
+The `accessor` function is provided three arguments:
 
-- `d`: the current datum
-- `i`: the row index of the current element
-- `j`: the column index of the current element 
+- 	__d__: the current element
+- 	__i__: the row index of the current element
+- 	__j__: the column index of the current element 
 
-The function also accepts an `dtype` option, which specifies the data type of the matrix to be created. The default value is `float64`.
-
-The following `dtypes` are accepted:
-
-*	`int8`
-*	`uint8`
-*	`uint8_clamped`
-*	`int16`
-*	`uint16`
-*	`int32`
-*	`uint32`
-*	`float32`
-*	`float64`
+By default, the [`matrix`](https://github.com/dstructs/matrix) elements are floating-point 64-bit numbers (`float64`). To specify a different data type, set the `dtype` option.
 
 ``` javascript
-var X = [
+var arr = [
 	[ 1.1, 2.3 ],
 	[ 3.2, 4.1 ]
-]
-var mat = toMatrix( X, {'dtype': 'int32'} );
+];
+
+var mat = toMatrix( arr, {
+	'dtype': 'int32'
+});
 /*
-	[ 1, 2,
-	  3, 4 ]
+	[ 1 2
+	  3 4 ]
 */
 ```
+
+For supported data types, see [dstructs-matrix](https://github.com/dstructs/matrix). 
+
+
 
 ## Examples
 
 ``` javascript
 var toMatrix = require( 'compute-to-matrix' );
 
-var X = [
+var nRows,
+	nCols,
+	arr,
+	mat,
+	i, j;
+
+arr = [
 	[ 2, 4, 3, 1],
 	[ 1, 2, 2, 1],
 	[ 7, 3, 9, 7],
@@ -111,9 +113,16 @@ var X = [
 	[ 3, 2, 3, 1]
 ];
 
-var m = toMatrix( X );
-var val = m.get( 3, 0 );
-// returns 11
+nRows = arr.length;
+nCols = arr[ 0 ].length;
+
+mat = toMatrix( arr );
+
+for ( i = 0; i < nRows; i++ ) {
+	for ( j = 0; j < nCols; j++ ) {
+		console.log( '(%d,%d) -> %d', i, j, mat.get( i, j ) );
+	}
+}
 ```
 
 To run the example code from the top-level application directory,
@@ -159,7 +168,7 @@ $ make view-cov
 
 ## Copyright
 
-Copyright &copy; 2015. The Compute.io Authors.
+Copyright &copy; 2015. The [Compute.io](https://github.com/compute-io) Authors.
 
 
 [npm-image]: http://img.shields.io/npm/v/compute-to-matrix.svg
