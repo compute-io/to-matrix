@@ -121,7 +121,7 @@ describe( 'compute-to-matrix', function tests() {
 	});
 
 	it( 'should throw an error if provided nested arrays with varying dimensions', function test() {
-		expect( badValue ).to.throw( TypeError );
+		expect( badValue ).to.throw( Error );
 		function badValue() {
 			toMatrix( [[1,2,3],[4,5]] );
 		}
