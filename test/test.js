@@ -24,8 +24,7 @@ describe( 'compute-to-matrix', function tests() {
 		expect( toMatrix ).to.be.a( 'function' );
 	});
 
-
-	it( 'should throw an error if provided input which is not an array of arrays', function test() {
+	it( 'should throw an error if the first argument is not an array of arrays', function test() {
 		var values = [
 			'5',
 			5,
@@ -34,6 +33,8 @@ describe( 'compute-to-matrix', function tests() {
 			null,
 			NaN,
 			[],
+			[ [], null ],
+			[ [], {} ],
 			{},
 			function(){}
 		];
@@ -41,13 +42,11 @@ describe( 'compute-to-matrix', function tests() {
 		for ( var i = 0; i < values.length; i++ ) {
 			expect( badValue( values[ i ] ) ).to.throw( TypeError );
 		}
-
 		function badValue( value ) {
 			return function() {
 				toMatrix( value );
 			};
 		}
-
 	});
 
 	it( 'should throw an error if `options` is not an object', function test() {
@@ -65,10 +64,9 @@ describe( 'compute-to-matrix', function tests() {
 		for ( var i = 0; i < values.length; i++ ) {
 			expect( badValue( values[ i ] ) ).to.throw( TypeError );
 		}
-
 		function badValue( value ) {
 			return function() {
-				toMatrix( [ [ 1, 2 ], [ 3, 4 ] ], value );
+				toMatrix( [[1,2],[3,4]], value );
 			};
 		}
 	});
@@ -88,15 +86,16 @@ describe( 'compute-to-matrix', function tests() {
 		for ( var i = 0; i < values.length; i++ ) {
 			expect( badValue( values[ i ] ) ).to.throw( TypeError );
 		}
-
 		function badValue( value ) {
 			return function() {
-				toMatrix(  [ [ 1, 2 ], [ 3, 4 ] ], {'accessor': value} );
+				toMatrix( [[1,2],[3,4]], {
+					'accessor': value
+				});
 			};
 		}
 	});
 
-	it( 'should throw an error if provided a data type which is not equal to element of DTYPES', function test() {
+	it( 'should throw an error if provided an unknown or unsupported data type', function test() {
 		var values = [
 			'5',
 			5,
@@ -112,76 +111,65 @@ describe( 'compute-to-matrix', function tests() {
 		for ( var i = 0; i < values.length; i++ ) {
 			expect( badValue( values[ i ] ) ).to.throw( TypeError );
 		}
-
 		function badValue( value ) {
 			return function() {
-				toMatrix(  [ [ 1, 2 ], [ 3, 4 ] ], {'dtype': value} );
+				toMatrix( [[1,2],[3,4]], {
+					'dtype': value
+				});
 			};
 		}
 	});
 
-	it( 'should throw an error if provided an array of arrays of unequal dimensions', function test() {
-
-		// without accessor:
-		expect( badValue() ).to.throw( TypeError );
-
+	it( 'should throw an error if provided nested arrays with varying dimensions', function test() {
+		expect( badValue ).to.throw( TypeError );
 		function badValue() {
-			return function() {
-				toMatrix(  [ [ 1, 2, 3 ], [ 4, 5 ] ] );
-			};
+			toMatrix( [[1,2,3],[4,5]] );
 		}
-
-		// with accessor:
-		expect( badValue2() ).to.throw( TypeError );
-
-		function badValue2() {
-			return function() {
-				toMatrix(  [ [ {'x': 1}, 2, 3 ], [ {'x': 4}, 5 ] ], {'accessor': getValue} );
-			};
-		}
-
-		function getValue( d, i, j ) {
-			return j === 0 ? d.x : d;
-		}
-
 	});
 
+	it( 'should construct a matrix from an array of arrays', function test() {
+		var nRows,
+			nCols,
+			arr,
+			mat,
+			i, j;
 
-	it( 'should construct a Matrix from an array of arrays', function test() {
-
-		var i, j, m, X, nRows, nCols;
-
-		X = [
+		arr = [
 			[ 2, 4, 3, 1],
 			[ 1, 2, 2, 1],
 			[ 7, 3, 9, 7],
 			[ 11, 9, 9, 8],
 			[ 3, 2, 3, 1]
 		];
-		nRows = X.length;
-		nCols = X[0].length;
+		nRows = arr.length;
+		nCols = arr[ 0 ].length;
 
-		m = toMatrix( X );
+		mat = toMatrix( arr );
+
 		for ( i = 0; i < nRows; i++ ) {
 			for ( j = 0; j < nCols; j++ ) {
-				expect( m.get( i, j ) === X[i][j] ).to.be.true;
+				assert.strictEqual( mat.get( i, j ), arr[ i ][ j ] );
 			}
 		}
 	});
 
-	it( 'should construct a Matrix from an array of arrays specifying a data type', function test() {
+	it( 'should construct a matrix having a specified data type', function test() {
+		var expected,
+			nRows,
+			nCols,
+			arr,
+			mat,
+			i, j;
 
-		var i, j, m, X, expected, nRows, nCols;
-
-		X = [
+		arr = [
 			[ 2.2, 4, 3, 1],
 			[ 1, 2, 2, 1],
 			[ 7, 3.1, 9, 7.2],
 			[ 11, 9.3, 9, 8],
 			[ 3, 2, 3, 1]
 		];
-		nRows = X.length;
-		nCols = X[0].length;
+		nRows = arr.length;
+		nCols = arr[ 0 ].length;
 
 		expected = [
 			[ 2, 4, 3, 1],
@@ -191,37 +179,47 @@ describe( 'compute-to-matrix', function tests() {
 			[ 3, 2, 3, 1]
 		];
 
-		m = toMatrix( X, {'dtype': 'int32'} );
+		mat = toMatrix( arr, {
+			'dtype': 'int32'
+		});
+
+		assert.strictEqual( mat.dtype, 'int32' );
+
 		for ( i = 0; i < nRows; i++ ) {
 			for ( j = 0; j < nCols; j++ ) {
-				expect( m.get( i, j ) === expected[i][j] ).to.be.true;
+				assert.strictEqual( mat.get( i, j ), expected[ i ][ j ] );
 			}
 		}
 	});
 
-	it( 'should construct a Matrix from an array of arrays using an accessor function', function test() {
+	it( 'should construct a matrix using an accessor function', function test() {
+		var nRows,
+			nCols,
+			arr,
+			mat,
+			i, j;
 
-		var i, j, m, X, nRows, nCols;
-
-		X = [
+		arr = [
 			[ {'x': 2}, 4, 3, 1],
 			[ {'x': 1}, 2, 2, 1],
 			[ {'x': 7}, 3, 9, 7],
 			[ {'x': 11}, 9, 9, 8],
 			[ {'x': 3}, 2, 3, 1]
 		];
-		nRows = X.length;
-		nCols = X[0].length;
+		nRows = arr.length;
+		nCols = arr[ 0 ].length;
 
-		m = toMatrix( X, {'accessor': getValue} );
+		mat = toMatrix( arr, {
+			'accessor': getValue
+		});
+
 		for ( i = 0; i < nRows; i++ ) {
 			for ( j = 0; j < nCols; j++ ) {
-				expect( m.get( i, j ) === getValue( X[i][j], i, j ) ).to.be.true;
+				assert.strictEqual( mat.get( i, j ), getValue( arr[ i ][ j ], i, j ) );
 			}
 		}
-
 		function getValue( d, i, j ) {
-			return j === 0 ? d.x : d;
+			return ( j === 0 ) ? d.x : d;
 		}
 	});
 
