@@ -1,6 +1,6 @@
 {
   "name": "compute-to-matrix",
-  "version": "0.0.0",
+  "version": "1.0.0",
   "description": "Construct a matrix from an array of arrays.",
   "author": {
     "name": "Philipp Burckhardt",
@@ -12,8 +12,8 @@
       "email": "pburckhardt@outlook.com"
     },
     {
-    	"name": "Athan Reines",
-    	"email": "kgryte@gmail.com"
+      "name": "Athan Reines",
+      "email": "kgryte@gmail.com"
     }
   ],
   "scripts": {
